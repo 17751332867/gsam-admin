@@ -108,6 +108,11 @@ export default {
             this.baseUrl = baseUrl
             getAllDNAData().then(res=>{
                 this.tableData = res.data
+                for(let i=0;i<this.tableData.length;i++){
+                    if(this.tableData[i].fileList!==null){
+                        this.tableData[i].fileList=[this.tableData[i].fileList]
+                    }
+                }
             })
             console.log(this.tableData)
         }
