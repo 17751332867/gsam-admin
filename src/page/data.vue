@@ -3,7 +3,9 @@
         <head-top></head-top>
         <div>
             <el-row>
-                <el-col :span="24" class="option">头部</el-col>
+                <el-col :span="6" :offset="2" class="option">
+                    <el-button type="info" @click="addVisible=true">添加</el-button>
+                </el-col>
             </el-row>
             <el-row>
                 <el-col :span="23" class="table">
@@ -43,15 +45,91 @@
                                 </el-upload>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="description" label="描述" width="400">
+                        <el-table-column prop="name" label="名称" width="100"></el-table-column>
+                        <el-table-column prop="description" label="描述" width="300">
 
                         </el-table-column>
                         <el-table-column prop="size" label="文件大小" width="200">
 
                         </el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                               <el-button type="danger" @click="beforeDelete(scope.row)">删除</el-button>
+                               <el-button type="info" @click="beforeUpdate(scope.row)">修改</el-button>
+                            </template>
+                        </el-table-column>
                     </el-table>
                 </el-col>
             </el-row>
+        </div>
+        <div>
+            <el-dialog
+                title="添加"
+                :visible.sync="addVisible"
+                style="width: 60%;margin: auto"
+                :before-close="handleClose">
+                <el-form label-position="right" label-width="80px">
+                    <el-form-item label="名称">
+                        <el-input name="name" v-model=addData.name></el-input>
+                    </el-form-item>
+                    <el-form-item label="描述" >
+                        <el-input name="description" v-model="addData.description" type="textarea"></el-input>
+                    </el-form-item>
+                    <el-form-item label="类型">
+                        <el-select  v-model="addData.type">
+                            <el-option value="*.fa">
+
+                            </el-option>
+                            <el-option value="*.gfa">
+
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                   <el-button @click="addVisible = false">取 消</el-button>
+                   <el-button type="primary" @click="handleAddData">确 定</el-button>
+                </span>
+            </el-dialog>
+            <el-dialog
+                title="修改"
+                :visible.sync="updateVisible"
+                style="width: 60%;margin: auto"
+                :before-close="handleClose">
+                <el-form label-position="right" label-width="80px">
+                    <el-form-item label="名称">
+                        <el-input name="name" v-model=updateData.name></el-input>
+                    </el-form-item>
+                    <el-form-item label="描述" >
+                        <el-input name="description" v-model="updateData.description" type="textarea"></el-input>
+                    </el-form-item>
+                    <el-form-item label="类型">
+                        <el-select  v-model="updateData.type">
+                            <el-option value="*.fa">
+
+                            </el-option>
+                            <el-option value="*.gfa">
+
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                   <el-button @click="updateData = false">取 消</el-button>
+                   <el-button type="primary" @click="handleUpdateData">确 定</el-button>
+                </span>
+            </el-dialog>
+            <el-dialog
+                title="提示"
+                :visible.sync="deleteVisible"
+                width="30%"
+                :before-close="handleClose">
+                <span>你确定要删除DNA:{{deleteData.name}}吗</span>
+                <span slot="footer" class="dialog-footer">
+                <el-button @click="deleteVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleDeleteData">确 定</el-button>
+            </span>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -59,7 +137,7 @@
 <script>
 import HeadTop from "../components/headTop";
 import {baseUrl} from "../config/env";
-import {getAllDNAData} from "../api/getData";
+import {deleteData, getAllDNAData, insertData} from "../api/getData";
 
 export default {
     name: "data",
@@ -67,6 +145,21 @@ export default {
         HeadTop
     },data(){
         return{
+            deleteVisible: false,
+            updateVisible: false,
+            deleteData:{
+            },
+            updateData:{
+                name: '',
+                description: '',
+                type: ''
+            },
+            addData:{
+                name:'',
+                description:'',
+                type:''
+            },
+            addVisible: false,
             baseUrl:'',
             tableData:[{
                 id:1,
@@ -77,6 +170,65 @@ export default {
             }]
         }
     },methods:{
+        beforeDelete(row){
+            this.deleteData = row
+            this.deleteVisible = true
+        },
+        handleClose(done) {
+            this.$confirm('确认关闭？')
+                .then(_ => {
+                    done();
+                })
+                .catch(_ => {
+                });
+        },
+        handleDeleteData(){
+            console.log(this.deleteData)
+            this.deleteVisible = false
+            deleteData(this.deleteData.id).then(res=>{
+                this.tableData = res.data
+                for(let i=0;i<this.tableData.length;i++){
+                    if(this.tableData[i].fileList!==null){
+                        this.tableData[i].fileList=[this.tableData[i].fileList]
+                    }else{
+                        this.tableData[i].fileList=[]
+                    }
+                }
+            })
+        },
+        handleUpdateData(){
+            this.updateVisible = false;
+            updateData(this.updateData).then(res=>{
+                this.tableData = res.data
+                for(let i=0;i<this.tableData.length;i++){
+                    if(this.tableData[i].fileList!==null){
+                        this.tableData[i].fileList=[this.tableData[i].fileList]
+                    }else{
+                        this.tableData[i].fileList=[]
+                    }
+                }
+            })
+        },
+        handleAddData(){
+            this.addVisible = false;
+            insertData(this.addData).then(res=>{
+                this.tableData = res.data
+                for(let i=0;i<this.tableData.length;i++){
+                    if(this.tableData[i].fileList!==null){
+                        this.tableData[i].fileList=[this.tableData[i].fileList]
+                    }else{
+                        this.tableData[i].fileList=[]
+                    }
+                }
+            })
+            this.addData.name=''
+            this.addData.description=''
+            this.addData.type=''
+        },
+        beforeUpdate(row){
+            this.updateVisible = true;
+            this.updateData = row
+        },
         beforeUpload(fileList){
             if(fileList==null){
                 fileList=[]
@@ -103,7 +255,6 @@ export default {
                 title: '上传成功',
                 type: 'success'
             })
-            fileList.add(file)
         },getData(){
             this.baseUrl = baseUrl
             getAllDNAData().then(res=>{
@@ -111,6 +262,8 @@ export default {
                 for(let i=0;i<this.tableData.length;i++){
                     if(this.tableData[i].fileList!==null){
                         this.tableData[i].fileList=[this.tableData[i].fileList]
+                    }else{
+                        this.tableData[i].fileList=[]
                     }
                 }
             })
@@ -127,14 +280,12 @@ export default {
 .manage_page{
 
 }
-.option{
+.option {
     height: 100px;
-    background: wheat;
+    line-height: 100px;
 }
 .table{
-
     position: absolute;
-    top: 100px;
     background: #1c8de0;
 }
 </style>

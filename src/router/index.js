@@ -22,6 +22,8 @@ const main = r => require.ensure([], () => r(require('@/page/main')), 'main');
 const assemble = r => require.ensure([],()=>r(require('@/page/assemble')),'assemble');
 const indexing = r => require.ensure([],()=>r(require('@/page/indexing')),'index')
 const data = r => require.ensure([],()=>r(require('@/page/data')),'data')
+const indexingBenchmark = r => require.ensure([],()=>r(require('@/page/indexingBenchmark')),'indexingBenchmark')
+const PangenomeFile = r => require.ensure([],()=>r(require('@/page/PangenomeFile')),'PangenomeFile')
 const routes = [
 	{
 		path: '/',
@@ -44,13 +46,21 @@ const routes = [
 			component: indexing,
 			meta: ['算法管理', '匹配算法'],
 		}, {
+            path: '/indexingBenchmark',
+            component: indexingBenchmark,
+            meta: ['benchmark','indexingBenchmark']
+        },{
             path: '/data',
             component: data,
-            meta: ['数据管理','数据管理']
+            meta: ['数据管理','DNA数据管理']
+        },{
+            path: '/PangenomeFile',
+            component: PangenomeFile,
+            meta: ['数据管理','仿真数据']
         },{
 			path: '/userList',
 			component: userList,
-			meta: ['数据管理', '用户列表'],
+			meta: ['信息管理', '用户列表'],
 		},{
 			path: '/shopList',
 			component: shopList,

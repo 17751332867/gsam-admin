@@ -5,12 +5,8 @@
 				<el-menu :default-active="defaultActive" style="min-height: 100%;" theme="dark" router>
 					<el-menu-item index="manage"><i class="el-icon-menu"></i>首页</el-menu-item>
 					<el-submenu index="2">
-						<template slot="title"><i class="el-icon-document"></i>数据管理</template>
-						<el-menu-item index="userList">用户列表</el-menu-item>
-						<el-menu-item index="shopList">商家列表</el-menu-item>
-						<el-menu-item index="foodList">食品列表</el-menu-item>
-						<el-menu-item index="orderList">订单列表</el-menu-item>
-						<el-menu-item index="adminList">管理员列表</el-menu-item>
+						<template slot="title"><i class="el-icon-document"></i>benchmark</template>
+						<el-menu-item index="indexingBenchmark">indexingBenchmark</el-menu-item>
 					</el-submenu>
 					<el-submenu index="3">
 						<template slot="title"><i class="el-icon-plus"></i>算法管理</template>
@@ -20,11 +16,12 @@
 					<el-submenu index="4">
 						<template slot="title"><i class="el-icon-star-on"></i>数据管理</template>
 						<el-menu-item index="data">DNA数据管理</el-menu-item>
+						<el-menu-item index="PangenomeFile">仿真数据</el-menu-item>
 					</el-submenu>
 					<el-submenu index="5">
-						<template slot="title"><i class="el-icon-edit"></i>编辑</template>
+						<template slot="title"><i class="el-icon-edit"></i>信息管理</template>
 						<!-- <el-menu-item index="uploadImg">上传图片</el-menu-item> -->
-						<el-menu-item index="vueEdit">文本编辑</el-menu-item>
+						<el-menu-item index="userList">用户列表</el-menu-item>
 					</el-submenu>
 					<el-submenu index="6">
 						<template slot="title"><i class="el-icon-setting"></i>设置</template>

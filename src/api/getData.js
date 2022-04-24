@@ -6,6 +6,11 @@ import fetch from '@/config/fetch'
 
 export const login = data => fetch('/admin/login', data);
 
+export const insertData = (data) => fetch('/data/insert',data,'POST');
+
+export const updateData = (data) => fetch('/data/update',data,'POST');
+
+export const deleteData = (id) =>fetch(`/data/delete?id=${id}`)
 
 export const getAllDNAData = () => fetch('/data/selectAll');
 
@@ -15,7 +20,29 @@ export const insertIndexing = (data) => fetch('/indexing/insert',data,'POST')
 
 export const doUpdateIndexing = (data) => fetch('/indexing/update',data,'POST')
 
+export const getAllIndexingBenchmark = () => fetch('/benchmark/selectAll')
+
+export const selectBenchmarkResultById = (id) => fetch(`/benchmark/selectBenchmarkResultById?id=${id}`)
+
 export const doDeleteIndexing = (id) =>fetch(`/indexing/delete?id=${id}`)
+
+export const getFileById = (id) => fetch(`/file/selectById?id=${id}`)
+
+export const deleteBenchmarkById = (id) => fetch(`/benchmark/deleteBenchmarkById?id=${id}`)
+
+export const updateBenchmark = (data)=>fetch('/benchmark/update',data,'POST')
+
+export const selectUserInfo = () =>fetch('/user/selectAll')
+
+export const insertUserInfo = (data) =>fetch('/user/insert',data,'POST')
+
+export const updateUserInfo = (data) =>fetch('/user/update',data,'POST')
+
+export const deleteUserInfo = (id) =>fetch(`/user/delete?id=${id}`)
+
+export const getAllPangenomeFile = ()=>fetch('/PangenomeFile/selectAll')
+
+export const redoPangenomeFile = (params) => fetch('/PangenomeFile/redo', params,'POST')
 /**
  * 退出
  */
