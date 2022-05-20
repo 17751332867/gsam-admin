@@ -1,14 +1,25 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
-        <el-row>
-            <el-col :span="6" :offset="2" class="option">
-                <el-button @click="addVisible=true">添加</el-button>
+        <el-row style="height: 100px;line-height: 100px">
+            <el-col :span="2" :offset="2">
+                <el-button type="info" @click="addVisible=true">添加</el-button>
+            </el-col>
+            <el-col :span="2" :offset="1" style="font-size: 22px">
+                用户名:
+            </el-col>
+            <el-col :span="5" >
+                <el-input placeholder="请输入名称" prefix-icon="el-icon-search" v-model="username"></el-input>
+            </el-col>
+            <el-col :span="2" :offset="1" style="font-size: 22px">
+                手机号:
+            </el-col>
+            <el-col :span="5">
+                <el-input placeholder="请输入描述关键字" prefix-icon="el-icon-search" v-model="phone"></el-input>
             </el-col>
         </el-row>
         <el-row>
             <el-col>
-                <div class="table_container">
                     <el-table
                         :data="table"
                         highlight-current-row
@@ -50,7 +61,6 @@
                             :total="tableData.length">
                         </el-pagination>
                     </div>
-                </div>
             </el-col>
         </el-row>
         <div>
@@ -118,6 +128,8 @@
     export default {
         data(){
             return {
+                username: '',
+                phone: '',
                 pagesize:15,
                 deleteVisible:false,
                 deleteUser:{
@@ -134,6 +146,7 @@
                 updateVisible:false,
                 addVisible:false,
                 tableData:[],
+                tempData:[],
                 currentRow: null,
                 offset: 0,
                 limit: 20,
@@ -147,6 +160,23 @@
         created(){
             this.initData();
         },
+        watch:{
+            username(newName,oldName){
+                this.tableData = []
+                this.tempData.forEach(res=>{
+                    if(res.username.indexOf(newName)!==-1&&res.phone.indexOf(this.phone)!==-1){
+                        this.tableData.push(res)
+                    }
+                })
+            },phone(newName,oldName){
+                this.tableData = []
+                this.tempData.forEach(res=>{
+                    if(res.username.indexOf(this.username)!==-1&&res.phone.indexOf(newName)!==-1){
+                        this.tableData.push(res)
+                    }
+                })
+            }
+        },
         computed:{
             table(){
                 return this.tableData.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize)
@@ -155,7 +185,9 @@
         methods: {
             handleDeleteUser(){
                 deleteUserInfo(this.deleteUser.id).then(res=>{
+                    this.tempData = res.data
                     this.tableData = res.data
+                    this.$notify.success('删除成功')
                 })
                 this.deleteVisible = false;
             },
@@ -166,6 +198,8 @@
             handleUpdateUser(){
                 updateUserInfo(this.updateUser).then(res=>{
                     this.tableData = res.data
+                    this.tempData = res.data
+                    this.$notify.success('修改成功')
                 })
                 this.updateVisible = false;
             },
@@ -176,6 +210,8 @@
             handleAddUser(){
                 insertUserInfo(this.addUser).then(res=>{
                     this.tableData = res.data
+                    this.tempData = res.data
+                    this.$notify.success('添加成功')
                 })
                 this.addVisible = false;
             },
@@ -190,6 +226,7 @@
             async initData(){
                 selectUserInfo().then(res=>{
                     this.tableData = res.data
+                    this.tempData = res.data
                 })
             },
             handleSizeChange(val) {

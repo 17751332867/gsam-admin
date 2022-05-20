@@ -3,13 +3,25 @@
         <head-top></head-top>
         <div>
             <el-row>
-                <el-col :span="6" :offset="2" class="option">
+                <el-col :span="2" :offset="2">
                     <el-button type="info" @click="addVisible=true">添加</el-button>
+                </el-col>
+                <el-col :span="1" :offset="1" style="font-size: 22px">
+                    名称:
+                </el-col>
+                <el-col :span="5" >
+                    <el-input placeholder="请输入名称" prefix-icon="el-icon-search" v-model="name"></el-input>
+                </el-col>
+                <el-col :span="1" :offset="1" style="font-size: 22px">
+                    描述:
+                </el-col>
+                <el-col :span="5">
+                    <el-input placeholder="请输入描述关键字" prefix-icon="el-icon-search" v-model="description"></el-input>
                 </el-col>
             </el-row>
             <el-row>
-                <el-col :span="23" class="table">
-                    <el-table :data="tableData">
+                <el-col :span="23">
+                    <el-table :data="table">
                         <el-table-column
                             prop="id"
                             label="id"
@@ -60,6 +72,17 @@
                         </el-table-column>
                     </el-table>
                 </el-col>
+            </el-row>
+            <el-row>
+                <el-pagination
+                    @size-change="size_change"
+                    @current-change="current_change"
+                    :current-page="currentPage"
+                    :page-sizes="[10,20,30]"
+                    :page-size="pagesize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="tableData.length">
+                </el-pagination>
             </el-row>
         </div>
         <div>
@@ -115,7 +138,7 @@
                     </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                   <el-button @click="updateData = false">取 消</el-button>
+                   <el-button @click="updateVisible = false">取 消</el-button>
                    <el-button type="primary" @click="handleUpdateData">确 定</el-button>
                 </span>
             </el-dialog>
@@ -145,6 +168,10 @@ export default {
         HeadTop
     },data(){
         return{
+            name:'',
+            description:'',
+            currentPage:1,
+            pagesize:10,
             deleteVisible: false,
             updateVisible: false,
             deleteData:{
@@ -161,6 +188,7 @@ export default {
             },
             addVisible: false,
             baseUrl:'',
+            tempData:[],
             tableData:[{
                 id:1,
                 type:'*.fa',
@@ -169,7 +197,36 @@ export default {
                 description:'这是一个人类花了大价钱搞出来的DNA序列,这是一个人类花了大价钱搞出来的DNA序列,这是一个人类花了大价钱搞出来的DNA序列,这是一个人类花了大价钱搞出来的DNA序列'
             }]
         }
+    },
+    watch: {
+        name (newName, oldName) {
+            this.tableData = []
+            this.tempData.forEach(res => {
+                if (res.name.indexOf(newName) !== -1 && res.description.indexOf(this.description) !== -1) {
+                    this.tableData.push(res)
+                }
+            })
+        },
+        description (newName, oldName) {
+            this.tableData = []
+            this.tempData.forEach(res => {
+                if (res.name.indexOf(this.name) !== -1 && res.description.indexOf(newName) !== -1) {
+                    this.tableData.push(res)
+                }
+            })
+        }
+    },
+    computed:{
+        table(){
+            return this.tableData.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize)
+        }
     },methods:{
+        size_change(newSize){
+            this.pagesize = newSize
+        },
+        current_change(newPage){
+            this.currentPage = newPage
+        },
         beforeDelete(row){
             this.deleteData = row
             this.deleteVisible = true
@@ -187,6 +244,7 @@ export default {
             this.deleteVisible = false
             deleteData(this.deleteData.id).then(res=>{
                 this.tableData = res.data
+                this.tempData = res.data
                 for(let i=0;i<this.tableData.length;i++){
                     if(this.tableData[i].fileList!==null){
                         this.tableData[i].fileList=[this.tableData[i].fileList]
@@ -199,6 +257,7 @@ export default {
         handleUpdateData(){
             this.updateVisible = false;
             updateData(this.updateData).then(res=>{
+                this.tableData = res.data
                 this.tableData = res.data
                 for(let i=0;i<this.tableData.length;i++){
                     if(this.tableData[i].fileList!==null){
@@ -213,6 +272,7 @@ export default {
             this.addVisible = false;
             insertData(this.addData).then(res=>{
                 this.tableData = res.data
+                this.tempData = res.data
                 for(let i=0;i<this.tableData.length;i++){
                     if(this.tableData[i].fileList!==null){
                         this.tableData[i].fileList=[this.tableData[i].fileList]
@@ -258,7 +318,9 @@ export default {
         },getData(){
             this.baseUrl = baseUrl
             getAllDNAData().then(res=>{
+                console.log(res.data)
                 this.tableData = res.data
+                this.tempData = res.data
                 for(let i=0;i<this.tableData.length;i++){
                     if(this.tableData[i].fileList!==null){
                         this.tableData[i].fileList=[this.tableData[i].fileList]

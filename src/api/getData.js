@@ -1,26 +1,26 @@
 import fetch from '@/config/fetch'
-
+import { get, post } from './http'
 /**
  * 登陆
  */
 
-export const login = data => fetch('/admin/login', data);
+export const login = data => get('/admin/login', data);
 
-export const insertData = (data) => fetch('/data/insert',data,'POST');
+export const insertData = (data) => get('/data/insert',data,'POST');
 
-export const updateData = (data) => fetch('/data/update',data,'POST');
+export const updateData = (data) => get('/data/update',data,'POST');
 
-export const deleteData = (id) =>fetch(`/data/delete?id=${id}`)
+export const deleteData = (id) =>get(`/data/delete?id=${id}`)
 
-export const getAllDNAData = () => fetch('/data/selectAll');
+export const getAllDNAData = () => get('/data/selectAll');
 
-export const getAllIndexing = () => fetch('/indexing/selectAll')
+export const getAllIndexing = () => get('/indexing/selectAll')
 
 export const insertIndexing = (data) => fetch('/indexing/insert',data,'POST')
 
 export const doUpdateIndexing = (data) => fetch('/indexing/update',data,'POST')
 
-export const getAllIndexingBenchmark = () => fetch('/benchmark/selectAll')
+export const getAllIndexingBenchmark = () => get('/benchmark/selectAll')
 
 export const selectBenchmarkResultById = (id) => fetch(`/benchmark/selectBenchmarkResultById?id=${id}`)
 
@@ -32,7 +32,7 @@ export const deleteBenchmarkById = (id) => fetch(`/benchmark/deleteBenchmarkById
 
 export const updateBenchmark = (data)=>fetch('/benchmark/update',data,'POST')
 
-export const selectUserInfo = () =>fetch('/user/selectAll')
+export const selectUserInfo = () =>get('/user/selectAll')
 
 export const insertUserInfo = (data) =>fetch('/user/insert',data,'POST')
 
@@ -40,9 +40,33 @@ export const updateUserInfo = (data) =>fetch('/user/update',data,'POST')
 
 export const deleteUserInfo = (id) =>fetch(`/user/delete?id=${id}`)
 
-export const getAllPangenomeFile = ()=>fetch('/PangenomeFile/selectAll')
+export const getAllPangenomeFile = ()=>get('/PangenomeFile/selectAll')
 
 export const redoPangenomeFile = (params) => fetch('/PangenomeFile/redo', params,'POST')
+
+export const deletePangenomeFile = (id) => fetch(`/PangenomeFile/delete?id=${id}`)
+
+export const selectVisualization = () => fetch('/visualization/selectAll')
+
+export const deleteVisualization = (id) => fetch(`/visualization/delete?id=${id}`)
+
+export const updateVisualization = (params) => post(`/visualization/update`,params)
+
+export const getUrlCountList = () => fetch('/static/urlCountList')
+
+export const getTimeCountList = () =>fetch('/static/timeCountList')
+
+export const getAllAdmin = () =>get('/admin/selectAll')
+
+export const addAdmin = (params) => post('/admin/insert',params)
+
+export const updateAdmin = (params) => fetch('/admin/update',params,'POST')
+
+export const deleteAdmin = (id) => fetch(`/admin/delete?id=${id}`)
+
+export const getAllChromosome = () => get('/chromosome/selectAll')
+
+export const deleteChromosomeById = (id) => get(`chromosome/delete?id=${id}`)
 /**
  * 退出
  */
@@ -53,7 +77,6 @@ export const signout = () => fetch('/admin/signout');
  * 获取用户信息
  */
 
-export const getAdminInfo = () => fetch('/admin/info');
 
 /**
  * api请求量

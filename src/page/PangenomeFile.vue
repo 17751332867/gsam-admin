@@ -9,7 +9,7 @@
             </el-row>
             <el-row>
                 <el-col :span="23" class="table">
-                    <el-table :data="tableData" border>
+                    <el-table :data="table" border>
                         <el-table-column
                             type="index"
                             label="id"
@@ -37,6 +37,17 @@
                         </el-table-column>
                     </el-table>
                 </el-col>
+            </el-row>
+            <el-row>
+                <el-pagination
+                    @size-change="size_change"
+                    @current-change="current_change"
+                    :current-page="currentPage"
+                    :page-sizes="[10,20,30]"
+                    :page-size="pagesize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="tableData.length">
+                </el-pagination>
             </el-row>
         </div>
         <el-dialog
@@ -66,11 +77,22 @@
                    <el-button type="primary" @click="handleUpdateData">确 定</el-button>
                 </span>
         </el-dialog>
+        <el-dialog
+            title="提示"
+            :visible.sync="deleteVisible"
+            width="30%"
+            :before-close="handleClose">
+            <span>你确定要删除模拟数据:{{deleteData.name}}吗</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="deleteVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleDeleteData">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-import {getAllPangenomeFile, redoPangenomeFile} from "../api/getData";
+import {deletePangenomeFile, getAllPangenomeFile, redoPangenomeFile} from "../api/getData";
 import HeadTop from "../components/headTop";
 
 export default {
@@ -80,7 +102,13 @@ export default {
     },
     data(){
         return{
+            currentPage:1,
+            pagesize:10,
             addVisible:false,
+            deleteVisible:false,
+            deleteData:{
+
+            },
             tableData:[],
             updateData:{
                 maxLengthLowerBound:-1,
@@ -92,7 +120,24 @@ export default {
             },
             updateVisible:false
         }
-    },methods:{
+    },
+    computed:{
+        table(){
+            return this.tableData.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize)
+        }
+    },
+    methods:{
+        size_change(newSize){
+            this.pagesize = newSize
+        },
+        //监听 页码值 改变的事件
+        current_change(newPage){
+            this.currentPage = newPage
+        },
+        beforeDelete(data){
+            this.deleteData = data
+            this.deleteVisible = true
+        },
         handleClose(done) {
             this.$confirm('确认关闭？')
                 .then(_ => {
@@ -114,6 +159,19 @@ export default {
                 this.tableData = res.data
             })
             this.updateVisible = false
+            this.$notify({
+                title: '重新生成成功',
+                type: 'success'
+            })
+        },handleDeleteData(){
+            deletePangenomeFile(this.deleteData.id).then(res=>{
+                this.tableData = res.data
+            })
+            this.deleteVisible = false
+            this.$notify({
+                title: '删除成功',
+                type: 'success'
+            })
         }
     },created() {
         this.init()

@@ -3,12 +3,24 @@
         <head-top></head-top>
         <div>
             <el-row>
-                <el-col :span="6" :offset="2" class="option">
+                <el-col :span="2" :offset="2">
                     <el-button type="info" @click="addVisible=true">添加</el-button>
+                </el-col>
+                <el-col :span="1" :offset="1" style="font-size: 22px">
+                    名称:
+                </el-col>
+                <el-col :span="5" >
+                    <el-input placeholder="请输入名称" prefix-icon="el-icon-search" v-model="name"></el-input>
+                </el-col>
+                <el-col :span="1" :offset="1" style="font-size: 22px">
+                    描述:
+                </el-col>
+                <el-col :span="5">
+                    <el-input placeholder="请输入描述关键字" prefix-icon="el-icon-search" v-model="description"></el-input>
                 </el-col>
             </el-row>
             <el-row>
-                <el-col :span="23" class="table">
+                <el-col :span="23">
                     <el-table :data="tableData" style="width: 100%">
                         <el-table-column prop="id" width="80" label="id"></el-table-column>
                         <el-table-column prop="name" width="150" label="算法名"></el-table-column>
@@ -44,6 +56,21 @@
                             </template>
                         </el-table-column>
                     </el-table>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col>
+                    <el-row>
+                        <el-pagination
+                            @size-change="size_change"
+                            @current-change="current_change"
+                            :current-page="currentPage"
+                            :page-sizes="[10,20,30]"
+                            :page-size="pagesize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="tableData.length">
+                        </el-pagination>
+                    </el-row>
                 </el-col>
             </el-row>
         </div>
@@ -115,6 +142,10 @@ export default {
         headTop
     }, data() {
         return {
+            name:'',
+            description:'',
+            currentPage:1,
+            pagesize:10,
             deleteIndexing:{},
             deleteVisible:false,
             updateIndexing: {
@@ -129,6 +160,7 @@ export default {
             },
             addVisible: false,
             updateVisible: false,
+            tempData:[],
             tableData: [
                 {
                     id: 1,
@@ -139,11 +171,41 @@ export default {
                 }
             ]
         }
-    }, methods: {
+    },
+    watch: {
+        name (newName, oldName) {
+            this.tableData = []
+            this.tempData.forEach(res => {
+                if (res.name.indexOf(newName) !== -1 && res.description.indexOf(this.description) !== -1) {
+                    this.tableData.push(res)
+                }
+            })
+        },
+        description (newName, oldName) {
+            this.tableData = []
+            this.tempData.forEach(res => {
+                if (res.name.indexOf(this.name) !== -1 && res.description.indexOf(newName) !== -1) {
+                    this.tableData.push(res)
+                }
+            })
+        }
+    },methods: {
+        size_change(newSize){
+            this.pagesize = newSize
+        },
+        //监听 页码值 改变的事件
+        current_change(newPage){
+            this.currentPage = newPage
+        },
         doDeleteIndexing(){
             doDeleteIndexing(this.deleteIndexing.id).then(res=>{
                 this.tableData = res.data
+                this.tempData = res.data
                 this.deleteVisible = false
+            })
+            this.$notify({
+                title: '删除成功',
+                type: 'success'
             })
         },
         setDeleteInfo(indexing){
@@ -153,6 +215,7 @@ export default {
         init() {
             getAllIndexing().then(res => {
                 this.tableData = res.data
+                this.tempData = res.data
                 console.log(this.tableData)
             })
         },
@@ -161,7 +224,13 @@ export default {
             doUpdateIndexing(this.updateIndexing).then(res => {
                 this.updateVisible = false
                 this.tableData = res.data
+                this.tempData = res.data
+                this.$notify({
+                    title: '修改成功',
+                    type: 'success'
+                })
             })
+
         },
         beforeUpload(fileList) {
             console.log(fileList)

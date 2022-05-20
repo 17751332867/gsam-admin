@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Visualization from "../page/visualization";
+import AdminList from "../page/AdminList";
+import Chromosome from "../page/Chromosome";
 
 Vue.use(Router)
 
@@ -8,8 +11,7 @@ const manage = r => require.ensure([], () => r(require('@/page/manage')), 'manag
 const userList = r => require.ensure([], () => r(require('@/page/userList')), 'userList');
 const shopList = r => require.ensure([], () => r(require('@/page/shopList')), 'shopList');
 const foodList = r => require.ensure([], () => r(require('@/page/foodList')), 'foodList');
-const orderList = r => require.ensure([], () => r(require('@/page/orderList')), 'orderList');
-const adminList = r => require.ensure([], () => r(require('@/page/adminList')), 'adminList');
+
 const visitor = r => require.ensure([], () => r(require('@/page/visitor')), 'visitor');
 const newMember = r => require.ensure([], () => r(require('@/page/newMember')), 'newMember');
 const uploadImg = r => require.ensure([], () => r(require('@/page/uploadImg')), 'uploadImg');
@@ -24,6 +26,8 @@ const indexing = r => require.ensure([],()=>r(require('@/page/indexing')),'index
 const data = r => require.ensure([],()=>r(require('@/page/data')),'data')
 const indexingBenchmark = r => require.ensure([],()=>r(require('@/page/indexingBenchmark')),'indexingBenchmark')
 const PangenomeFile = r => require.ensure([],()=>r(require('@/page/PangenomeFile')),'PangenomeFile')
+const visualization = r => require.ensure([],()=>r(require('@/page/visualization')),'visualization')
+const chromosome = r => require.ensure([],()=>r(require('@/page/Chromosome')),'chromosome')
 const routes = [
 	{
 		path: '/',
@@ -34,6 +38,18 @@ const routes = [
 		component: manage,
 		name: '',
 		children: [{
+            path: '/visualization',
+            component: Visualization,
+            meta: ['可视化','对比可视化']
+        },{
+            path: '/chromosome',
+            component: Chromosome,
+            meta: ['数据管理','数据提取']
+        },{
+            path:'/admin',
+            component: AdminList,
+            meta: ['信息管理','管理员列表']
+        },{
 			path: '',
 			component: main,
 			meta: [],
@@ -69,14 +85,6 @@ const routes = [
 			path: '/foodList',
 			component: foodList,
 			meta: ['数据管理', '食品列表'],
-		},{
-			path: '/orderList',
-			component: orderList,
-			meta: ['数据管理', '订单列表'],
-		},{
-			path: '/adminList',
-			component: adminList,
-			meta: ['数据管理', '管理员列表'],
 		},{
 			path: '/visitor',
 			component: visitor,

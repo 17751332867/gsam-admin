@@ -10,23 +10,23 @@
 					</el-submenu>
 					<el-submenu index="3">
 						<template slot="title"><i class="el-icon-plus"></i>算法管理</template>
-						<el-menu-item index="assemble">组装算法</el-menu-item>
 						<el-menu-item index="indexing">匹配算法</el-menu-item>
 					</el-submenu>
 					<el-submenu index="4">
 						<template slot="title"><i class="el-icon-star-on"></i>数据管理</template>
 						<el-menu-item index="data">DNA数据管理</el-menu-item>
 						<el-menu-item index="PangenomeFile">仿真数据</el-menu-item>
+                        <el-menu-item index="chromosome">数据提取</el-menu-item>
 					</el-submenu>
 					<el-submenu index="5">
 						<template slot="title"><i class="el-icon-edit"></i>信息管理</template>
 						<!-- <el-menu-item index="uploadImg">上传图片</el-menu-item> -->
 						<el-menu-item index="userList">用户列表</el-menu-item>
+						<el-menu-item index="admin">管理员列表</el-menu-item>
 					</el-submenu>
 					<el-submenu index="6">
-						<template slot="title"><i class="el-icon-setting"></i>设置</template>
-						<el-menu-item index="adminSet">管理员设置</el-menu-item>
-						<!-- <el-menu-item index="sendMessage">发送通知</el-menu-item> -->
+						<template slot="title"><i class="el-icon-setting"></i>可视化</template>
+						<el-menu-item index="visualization">对比可视化</el-menu-item>
 					</el-submenu>
 					<el-submenu index="7">
 						<template slot="title"><i class="el-icon-warning"></i>说明</template>
